@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "./videojs.css";
 import videojs from "video.js";
+import { ProgressBar } from "react-step-progress-bar";
+import "react-step-progress-bar/styles.css";
 
 class VideoJSPlayerComponent extends Component {
   player;
@@ -40,6 +42,27 @@ class VideoJSPlayerComponent extends Component {
   }
 
   componentDidMount() {
+    //Intersection observer
+    let options = {
+      rootMargin: "0px",
+      threshold: [0.8],
+    };
+
+    const onVideoPress = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+         this.play();
+        } else {
+         this.pause();
+        }
+      });
+    };
+
+    let observer = new IntersectionObserver(onVideoPress, options);
+    observer.observe(this.videoNode);
+
+    //Video Js implemetation
+
     this.player = videojs(this.videoNode, this.videoJsOptions, () => {
       if (this.player) {
         // Triggered
@@ -78,17 +101,18 @@ class VideoJSPlayerComponent extends Component {
     });
   }
 
+//Mute Toggle
   isMute = () => {
     if (this.state.muted) {
       this.player.muted(true);
       this.setState({ muted: !this.state.muted });
-      console.log(this.state.muted, "isMute true");
     } else {
       this.player.muted(false);
       this.setState({ muted: !this.state.muted });
-      console.log(this.state.muted, "isMute false");
     }
   };
+
+  //Play and Pause function and toggle
 
   play = () => {
     if (this.player) {
@@ -110,6 +134,8 @@ class VideoJSPlayerComponent extends Component {
     }
   };
 
+  //forwrd and backward functions
+
   forwardVideo = () => {
     if (this.player) {
       this.player.currentTime(this.player.currentTime() + 10);
@@ -126,13 +152,27 @@ class VideoJSPlayerComponent extends Component {
     if (this.player) {
       this.player.currentTime(55);
     }
+    
   };
+
+  //SeekBar
+//   handleVideoProgres = (event) => {
+//     const manualChange = Number(event.target.value);
+//     videoElement.current.currentTime =
+//         (manualChange * videoElement.current.duration) / 100;
+
+//     setPlayerState({
+//         ...playerState,
+//         progress: manualChange,
+//     });
+// };
 
   // destroy player on unmount
   componentWillUnmount() {
     if (this.player) {
       this.player.dispose();
     }
+    this.setState({ playedPercentage :  (this.state.playedSeconds / this.state.totalDuration)*100 })
   }
 
   secondsToHms = (secs) => {
@@ -152,15 +192,21 @@ class VideoJSPlayerComponent extends Component {
       remainingVideoPlay,
       isPlaying,
       muted,
+      playedPercentage
     } = this.state;
+     
+
+    
 
     return (
       <div className="customVideoPlayer">
+       
         <div className="videoCard" data-vjs-player>
           <video
             id="video"
             ref={(node) => (this.videoNode = node)}
             className="videoCard__player "
+            onClick={this.togglePlay}
           />
         </div>
         <hr />
@@ -220,7 +266,19 @@ class VideoJSPlayerComponent extends Component {
             <></>
           )}
           &nbsp;
+         
+          <input
+          // ref={rangeRef}
+            type="range"
+            min="0"
+            max="100"
+           
+            // value={this.state.currentTime}
+            // onChange={(e) => handleVideoProgres(e)}
+            style={{background:"linear-gradient(to right, orange ${(parseInt(props.value)-props.min)*100/(props.max-props.min)}%, #ccc 0px` "}}
+          />
         </div>
+        
       </div>
     );
   }

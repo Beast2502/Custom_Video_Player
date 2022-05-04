@@ -2,6 +2,9 @@
     height: 100%;
     width: 100%;
 }
+.vjs-loading-spinner {
+  display: none !important;
+}
 
 .customVideoPlayer{
     padding-top: 100px;
