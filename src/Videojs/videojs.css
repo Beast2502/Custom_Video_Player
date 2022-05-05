@@ -5,6 +5,30 @@
 .vjs-loading-spinner {
   display: none !important;
 }
+.videoCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  /* border: 1px solid black */
+  line-height: 0;
+  z-index: 0;
+}
+.videoCard__player {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.neoPlayPauseBtn {
+  z-index: 1;
+  
+}
+video {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
 
 .customVideoPlayer{
     padding-top: 100px;
@@ -14,21 +38,4 @@
     flex-direction: column;
 }
 
-.videoCard {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    scroll-snap-align: start;
-    /* border: 1px solid black */
-    line-height: 0;
-  }
-  .videoCard__player {
-    object-fit: cover;
-    width: 100vw;
-    height: 100%;
-  }
-  video {
-    width: 100%;
-    min-height: 100%;
-  }
-  
+

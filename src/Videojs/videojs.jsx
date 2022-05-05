@@ -3,6 +3,8 @@ import "./videojs.css";
 import videojs from "video.js";
 import { ProgressBar } from "react-step-progress-bar";
 import "react-step-progress-bar/styles.css";
+import PlayIcon from "./utils/assets/play.png";
+import PauseIcon from "./utils/assets/pause.png";
 
 class VideoJSPlayerComponent extends Component {
   player;
@@ -24,7 +26,7 @@ class VideoJSPlayerComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      videoBuffering: false,
+      videoBuffering: true,
       videoURL: this.props.Source,
       videoInitialized: false,
       isPlaying: false,
@@ -51,9 +53,9 @@ class VideoJSPlayerComponent extends Component {
     const onVideoPress = (entries, observer) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-         this.play();
+          this.play();
         } else {
-         this.pause();
+          this.pause();
         }
       });
     };
@@ -101,7 +103,7 @@ class VideoJSPlayerComponent extends Component {
     });
   }
 
-//Mute Toggle
+  //Mute Toggle
   isMute = () => {
     if (this.state.muted) {
       this.player.muted(true);
@@ -148,31 +150,33 @@ class VideoJSPlayerComponent extends Component {
     }
   };
 
-  jumpTo = () => {
+  jumpTo = (time) => {
     if (this.player) {
-      this.player.currentTime(55);
+      this.player.currentTime(time);
     }
-    
   };
 
   //SeekBar
-//   handleVideoProgres = (event) => {
-//     const manualChange = Number(event.target.value);
-//     videoElement.current.currentTime =
-//         (manualChange * videoElement.current.duration) / 100;
+  //   handleVideoProgres = (event) => {
+  //     const manualChange = Number(event.target.value);
+  //     videoElement.current.currentTime =
+  //         (manualChange * videoElement.current.duration) / 100;
 
-//     setPlayerState({
-//         ...playerState,
-//         progress: manualChange,
-//     });
-// };
+  //     setPlayerState({
+  //         ...playerState,
+  //         progress: manualChange,
+  //     });
+  // };
 
   // destroy player on unmount
   componentWillUnmount() {
     if (this.player) {
       this.player.dispose();
     }
-    this.setState({ playedPercentage :  (this.state.playedSeconds / this.state.totalDuration)*100 })
+    this.setState({
+      playedPercentage:
+        (this.state.playedSeconds / this.state.totalDuration) * 100,
+    });
   }
 
   secondsToHms = (secs) => {
@@ -192,15 +196,11 @@ class VideoJSPlayerComponent extends Component {
       remainingVideoPlay,
       isPlaying,
       muted,
-      playedPercentage
+      playedPercentage,
     } = this.state;
-     
-
-    
 
     return (
-      <div className="customVideoPlayer">
-       
+      <div className="">
         <div className="videoCard" data-vjs-player>
           <video
             id="video"
@@ -225,16 +225,23 @@ class VideoJSPlayerComponent extends Component {
         <br />
         <div className="d-flex">
           {this.props.PlayPauseBtn ? (
-            <button className="btn btn-danger btn-sm" onClick={this.togglePlay}>
-              {isPlaying ? "Pause" : "Play"}
-            </button>
+            <img alt ="playIcon" src={isPlaying ? PauseIcon : PlayIcon } onClick={this.togglePlay} className="neoPlayPauseBtn"/>
+            // <button className="btn btn-danger btn-sm" >
+            //   {isPlaying ? "Pause" : "Play"}
+            // </button>
           ) : (
             <></>
           )}
           &nbsp;
-          <button className="btn btn-danger btn-sm" onClick={this.jumpTo}>
-            Play from 55th second
-          </button>
+          {this.props.JumpTo ? (
+            <>
+              <button className="btn btn-danger btn-sm" onClick={this.jumpTo}>
+                Play from 55th second
+              </button>
+            </>
+          ) : (
+            <></>
+          )}
           &nbsp;
           {this.props.ForBackwardBtn ? (
             <>
@@ -266,19 +273,22 @@ class VideoJSPlayerComponent extends Component {
             <></>
           )}
           &nbsp;
-         
-          <input
-          // ref={rangeRef}
-            type="range"
-            min="0"
-            max="100"
-           
-            // value={this.state.currentTime}
-            // onChange={(e) => handleVideoProgres(e)}
+          {this.props.SeekBar ? (
+            <>
+              <input
+                // ref={rangeRef}
+                type="range"
+                min="0"
+                max={this.state.totalDuration}
+                value={this.state.playedSeconds}
+                onChange={(e) => this.jumpTo(e.target.value)}
             style={{background:"linear-gradient(to right, orange ${(parseInt(props.value)-props.min)*100/(props.max-props.min)}%, #ccc 0px` "}}
-          />
+              />
+            </>
+          ) : (
+            <></>
+          )}
         </div>
-        
       </div>
     );
   }
