@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import "./videojs.css";
 import videojs from "video.js";
-import { ProgressBar } from "react-step-progress-bar";
 import "react-step-progress-bar/styles.css";
 import PlayIcon from "./utils/assets/play.png";
 import PauseIcon from "./utils/assets/pause.png";
+import SeekBar from "./features/Seekbar/SeekBar";
+import ProgressBar from "./features/ProgressBar/progressbar";
 
 class VideoJSPlayerComponent extends Component {
   player;
@@ -225,11 +226,16 @@ class VideoJSPlayerComponent extends Component {
         <br />
         <div className="d-flex">
           {this.props.PlayPauseBtn ? (
-            <img alt ="playIcon" src={isPlaying ? PauseIcon : PlayIcon } onClick={this.togglePlay} className="neoPlayPauseBtn"/>
+            <img
+              alt="playIcon"
+              src={isPlaying ? PauseIcon : PlayIcon}
+              onClick={this.togglePlay}
+              className="neoPlayPauseBtn"
+            />
+          ) : (
             // <button className="btn btn-danger btn-sm" >
             //   {isPlaying ? "Pause" : "Play"}
             // </button>
-          ) : (
             <></>
           )}
           &nbsp;
@@ -282,12 +288,24 @@ class VideoJSPlayerComponent extends Component {
                 max={this.state.totalDuration}
                 value={this.state.playedSeconds}
                 onChange={(e) => this.jumpTo(e.target.value)}
-            style={{background:"linear-gradient(to right, orange ${(parseInt(props.value)-props.min)*100/(props.max-props.min)}%, #ccc 0px` "}}
+                style={{
+                  background:
+                    "linear-gradient(to right, orange ${(parseInt(props.value)-props.min)*100/(props.max-props.min)}%, #ccc 0px` ",
+                }}
               />
+
+              {/* <SeekBar/> */}
             </>
           ) : (
             <></>
           )}
+          <ProgressBar
+            bgcolor="#FF002E"
+            progress={
+              (this.state.playedSeconds / this.state.totalDuration) * 100
+            }
+            height={6}
+          />
         </div>
       </div>
     );
